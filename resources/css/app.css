@@ -1,0 +1,118 @@
+/* app.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #333;
+    color: white;
+    padding: 1em 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added shadow */
+}
+
+footer {
+    background: #333;
+    color: white;
+    padding: 1em 0;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1); /* Added shadow */
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    width: 150px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin: 0 1em;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.nav-toggle {
+    display: none;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #333;
+    }
+
+    .nav-links li {
+        text-align: center;
+        padding: 1em 0;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+}
+
+/* app.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header.custom-bg, footer.custom-bg {
+    background-color: #FFF5FA; /* Updated background color */
+    color: #333; /* Ensure text color is dark for readability */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added shadow */
+}
+
+footer.custom-bg {
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1); /* Added shadow */
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Ensure main content takes full height minus header and footer */
+main {
+    flex: 1;
+}
+
+/* Additional styles if needed */
