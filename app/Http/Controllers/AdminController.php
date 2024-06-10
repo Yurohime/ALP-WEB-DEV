@@ -2,32 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\Order;
 use App\Models\Transaksi;
-use Carbon\Carbon;
-
+use App\Models\Pelanggan;
+use App\Models\Produk;
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        // Fetch data for transaction history
-        $transactions = Transaksi::selectRaw('DATE(tanggal_pembayaran) as date, COUNT(*) as count')
+        // Transaction History Data
+        $transactionHistory = Transaksi::select(DB::raw('DATE(tanggal_pembayaran) as date'), DB::raw('count(*) as count'))
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get();
+        $transactionHistoryLabels = $transactionHistory->pluck('date')->toArray();
+        $transactionHistoryData = $transactionHistory->pluck('count')->toArray();
 
-        $transactionHistoryLabels = $transactions->pluck('date')->map(function ($date) {
-            return Carbon::parse($date)->format('Y-m-d');
-        });
-        $transactionHistoryData = $transactions->pluck('count');
-
-        // Fetch data for transaction breakdown
-        $transactionBreakdown = Transaksi::selectRaw('jenis_pembayaran, COUNT(*) as count')
+        // Transaction Breakdown Data
+        $transactionBreakdown = Transaksi::select('jenis_pembayaran', DB::raw('count(*) as count'))
             ->groupBy('jenis_pembayaran')
             ->get();
+        $transactionBreakdownLabels = $transactionBreakdown->pluck('jenis_pembayaran')->toArray();
+        $transactionBreakdownData = $transactionBreakdown->pluck('count')->toArray();
 
-        $transactionBreakdownLabels = $transactionBreakdown->pluck('jenis_pembayaran');
-        $transactionBreakdownData = $transactionBreakdown->pluck('count');
+        // Revenue Distribution Data (total sales per product)
+        $revenueDistribution = Produk::join('transaksi_detail', 'produk.id_produk', '=', 'transaksi_detail.id_produk')
+            ->select('produk.nama_produk', DB::raw('sum(transaksi_detail.kuantitas * transaksi_detail.harga_jual) as total'))
+            ->groupBy('produk.nama_produk')
+            ->get();
+        $revenueDistributionLabels = $revenueDistribution->pluck('nama_produk')->toArray();
+        $revenueDistributionData = $revenueDistribution->pluck('total')->toArray();
+
+
+        // Product Sales Data (total sales per product)
+        $productSales = Produk::join('transaksi_detail', 'produk.id_produk', '=', 'transaksi_detail.id_produk')
+            ->select('produk.nama_produk', DB::raw('sum(transaksi_detail.kuantitas) as total'))
+            ->groupBy('produk.nama_produk')
+            ->get();
+        $productSalesLabels = $productSales->pluck('nama_produk')->toArray();
+        $productSalesData = $productSales->pluck('total')->toArray();
+
+        return view('admin.dashboard', compact(
+            'transactionHistoryLabels', 'transactionHistoryData',
+            'transactionBreakdownLabels', 'transactionBreakdownData',
+            'revenueDistributionLabels', 'revenueDistributionData',
+            'productSalesLabels', 'productSalesData'
+        ));
 
         return view('admin.dashboard', compact(
             'transactionHistoryLabels', 
